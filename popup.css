@@ -1,0 +1,77 @@
+:root 
+{
+    --potato-yellow: #f6d676;
+    --potato-brown: #8b6a34;
+    --potato-shadow: #e0b85a;
+    --potato-accent: #ffe9a9;
+}
+
+body 
+{
+    margin: 0;
+    padding: 14px;
+    width: 260px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segeo UI", sans-serif;
+    background: #e0b85a;
+    opacity: 1;
+    color: #2b1a0b;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.card
+{
+    background: var(--potato-yellow);
+    border-radius: 16px;
+    box-shadow: 0 4px 0 var(--potato-yellow);
+    padding: 12px 14px;
+    border: 2px solid var(--potato-brown);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.title-row
+{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+h1
+{
+    font-size: 16px;
+    margin: 0;
+    color: var(--potato-brown);
+    font-weight: 700;
+}
+
+.emoji
+{
+    font-size: 18px;
+    filter: drop-shadow(0 1px 0 rgba(0,0,0,0.2));
+}
+
+label
+{
+    font-size: 12px;
+    color: #4a3418;
+}
+
+select
+{
+width: 100%; margin-top: 4px; padding: 6px 8px; border-radius: 999px; border: 2px solid var(--potato-brown); background: var(--potato-accent); color: #4a3418; font-size: 12px; outline: none; appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--potato-brown) 50%), linear-gradient(135deg, var(--potato-brown) 50%, transparent 50%); background-position: calc(100% - 14px) 9px, calc(100% - 8px) 9px; background-size: 6px 6px, 6px 6px; background-repeat: no-repeat; cursor: pointer;
+}
+
+select:focus
+{
+    box-shadow: 0 0 0 2px rgba(139,106,52,0.25)
+}
+
+.hint
+{
+    font-size: 11px;
+    color: #5b4421;
+    opacity: 0.9;
+}
