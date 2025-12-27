@@ -8,41 +8,39 @@ chrome.runtime.onMessage.addListener((msg) => {
         return;
       }
 
-      // 1. Inject favicon BEFORE discarding
-      chrome.scripting.executeScript({
-        target: { tabId },
-        func: injectPotatoFavicon
-      }, () => {
+      const url = tab.url;
 
-        if (chrome.runtime.lastError) {
-          console.warn("Injection failed:", chrome.runtime.lastError.message);
-          return;
-        }
+      chrome.tabs.update(tabId, { autoDiscardable: true }, () => {
 
-        // 2. Wait 150ms so the DOM can update
-        setTimeout(() => {
-          chrome.tabs.discard(tabId);
-        }, 150);
+        chrome.tabs.discard(tabId, () => {
+          if (chrome.runtime.lastError) {
+            console.warn("Discard failed:", chrome.runtime.lastError.message);
+          } else {
+            console.log("Tab successfully discarded:", tabId);
+          }
+        });
+
+        chrome.storage.local.get({ sleepingTabs: [] }, data => {
+          const updated = [...new Set([...data.sleepingTabs, url])];
+          chrome.storage.local.set({ sleepingTabs: updated });
+        });
+
       });
     });
   }
 });
 
+// ⭐ Detect when a tab wakes up and remove it from sleeping list
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  if (changeInfo.status === "loading" || changeInfo.status === "complete") {
+    const url = tab.url;
 
-// Runs inside the tab BEFORE it sleeps
-function injectPotatoFavicon() {
-  // Remove existing icons
-  const oldIcons = document.querySelectorAll("link[rel~='icon']");
-  oldIcons.forEach(icon => icon.remove());
-
-  // Add potato icon
-  const newIcon = document.createElement("link");
-  newIcon.rel = "icon";
-  newIcon.href = chrome.runtime.getURL("icons/potato.png");
-  document.head.appendChild(newIcon);
-
-  // Add sleeping title
-  if (!document.title.includes("Sleeping")) {
-    document.title = "🥔 Sleeping — " + document.title;
+    chrome.storage.local.get({ sleepingTabs: [] }, data => {
+      if (data.sleepingTabs.includes(url)) {
+        const updated = data.sleepingTabs.filter(u => u !== url);
+        chrome.storage.local.set({ sleepingTabs: updated });
+        console.log("Tab woke up, removed from sleeping:", url);
+      }
+    });
   }
-}
+});
